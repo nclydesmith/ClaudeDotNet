@@ -101,7 +101,7 @@ public interface ILlmChatClient
 /// <summary>
 /// Executes a tool by name and returns its string output.
 /// </summary>
-public interface IToolExecutor
+public interface IQueryToolExecutor
 {
     /// <summary>
     /// Executes the named tool with the given JSON-encoded input.
