@@ -317,7 +317,13 @@
         "Round-trip: write a profile to a temp file, reload it, and assert equality — verified by unit test.",
         "Missing config file returns a default `ProfileConfig` with empty API key rather than throwing."
       ],
-      "testIntent": "unit-first — all tests use `ISecretStore` fakes; no live keychain access in CI."
+      "testIntent": "unit-first — all tests use `ISecretStore` fakes; no live keychain access in CI.",
+      "done": true,
+      "commitHash": "07b8f6c0d55a8a4b86acc821aef3a803b760539f",
+      "completedAt": "2026-04-03T18:23:50.022Z",
+      "sessionId": "8dd5d07b-d65c-4f6c-a75a-56d64f80a453",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude",
+      "sessionLogPath": "/Users/nicholasclyde-smith/.claude/projects/-Users-nicholasclyde-smith-Repos-Equity/8dd5d07b-d65c-4f6c-a75a-56d64f80a453.jsonl"
     },
     {
       "id": "SUB-010",
