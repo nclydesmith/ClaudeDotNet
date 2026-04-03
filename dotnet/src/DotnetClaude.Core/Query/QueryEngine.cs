@@ -1,6 +1,8 @@
 using System.Runtime.CompilerServices;
 
 namespace DotnetClaude.Core.Query;
+using DotnetClaude.Tools;
+using DotnetClaude.Providers;
 
 /// <summary>
 /// Orchestrates the multi-turn query/response loop against an LLM provider.
@@ -23,13 +25,13 @@ namespace DotnetClaude.Core.Query;
 /// </summary>
 public sealed class QueryEngine
 {
-    private readonly ILlmChatClient _chatClient;
-    private readonly IToolExecutor _toolExecutor;
+    private readonly ILlmStreamingClient _chatClient;
+    private readonly DotnetClaude.Tools.IToolExecutor _toolExecutor;
     private readonly QueryOptions _options;
 
     public QueryEngine(
-        ILlmChatClient chatClient,
-        IToolExecutor toolExecutor,
+        ILlmStreamingClient chatClient,
+        DotnetClaude.Tools.IToolExecutor toolExecutor,
         QueryOptions options)
     {
         _chatClient = chatClient;

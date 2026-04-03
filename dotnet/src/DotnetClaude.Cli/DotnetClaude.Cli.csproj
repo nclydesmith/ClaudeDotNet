@@ -7,11 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DotnetClaude.Providers\DotnetClaude.Providers.csproj" />
     <PackageReference Include="Spectre.Console" Version="0.49.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DotnetClaude.Providers\DotnetClaude.Providers.csproj" />
     <ProjectReference Include="..\DotnetClaude.Core\DotnetClaude.Core.csproj" />
+    <ProjectReference Include="..\DotnetClaude.Tools\DotnetClaude.Tools.csproj" />
   </ItemGroup>
 
 </Project>
