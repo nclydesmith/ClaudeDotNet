@@ -422,7 +422,13 @@
         "`WebSearchTool.ExecuteAsync(query)` calls `IWebSearchProvider.SearchAsync()` and returns structured results with title, URL, and snippet — verified by unit test with a fake provider.",
         "All three tools are registered in `ToolRegistry` at application startup — verified by an integration test that resolves each by name."
       ],
-      "testIntent": "unit-first with fakes for HTTP and child engine; no live network calls in CI."
+      "testIntent": "unit-first with fakes for HTTP and child engine; no live network calls in CI.",
+      "done": true,
+      "commitHash": "512cd62c9fdd63a5edf40477f47741e7d35f4c38",
+      "completedAt": "2026-04-03T21:42:24.947Z",
+      "sessionId": "8dd5d07b-d65c-4f6c-a75a-56d64f80a453",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude",
+      "sessionLogPath": "/Users/nicholasclyde-smith/.claude/projects/-Users-nicholasclyde-smith-Repos-Equity/8dd5d07b-d65c-4f6c-a75a-56d64f80a453.jsonl"
     }
   ]
 }
