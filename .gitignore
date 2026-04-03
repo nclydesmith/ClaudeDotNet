@@ -6,3 +6,11 @@ dist/
 !.env.example
 .openclaude-profile.json
 reports/
+
+# .NET build artifacts
+dotnet/**/bin/
+dotnet/**/obj/
+dotnet/**/*.user
+dotnet/**/*.suo
+dotnet/.vs/
+*.nupkg
