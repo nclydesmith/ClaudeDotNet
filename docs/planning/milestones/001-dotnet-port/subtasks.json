@@ -214,7 +214,13 @@
         "`BashTool` calls `ICanUseTool.IsAllowedAsync()` before launching the process; if denied, the process is never spawned — verified by unit test.",
         "stdout and stderr are streamed incrementally to `IToolProgressSink` during long-running commands."
       ],
-      "testIntent": "mixed — mock ProcessRunner for permission/timeout unit tests; real subprocess for integration smoke tests (skipped in CI sandbox)."
+      "testIntent": "mixed — mock ProcessRunner for permission/timeout unit tests; real subprocess for integration smoke tests (skipped in CI sandbox).",
+      "done": true,
+      "commitHash": "e95c401",
+      "completedAt": "2026-04-03T17:03:57.624Z",
+      "sessionId": "8dd5d07b-d65c-4f6c-a75a-56d64f80a453",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude",
+      "sessionLogPath": "/Users/nicholasclyde-smith/.claude/projects/-Users-nicholasclyde-smith-Repos-Equity/8dd5d07b-d65c-4f6c-a75a-56d64f80a453.jsonl"
     },
     {
       "id": "SUB-007",
@@ -243,7 +249,12 @@
         "Pressing Ctrl+C during streaming cancels the `CancellationToken` passed to `QueryEngine.RunAsync()` and prints a cancellation notice without throwing an unhandled exception.",
         "Token usage (prompt tokens / completion tokens) is displayed in the status line after each response."
       ],
-      "testIntent": "outside-in for REPL loop behaviour with stub engine; manual CLI E2E for terminal rendering correctness."
+      "testIntent": "outside-in for REPL loop behaviour with stub engine; manual CLI E2E for terminal rendering correctness.",
+      "done": true,
+      "commitHash": "0574e9f",
+      "completedAt": "2026-04-03T17:11:44.701Z",
+      "sessionId": "unknown",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude"
     },
     {
       "id": "SUB-008",
