@@ -1,0 +1,376 @@
+{
+  "$schema": "../../schemas/subtasks.schema.json",
+  "metadata": {
+    "milestone": "001-dotnet-port",
+    "title": "Initialise the conversion of OpenClaude to .NET C#",
+    "source": "text",
+    "generatedAt": "2026-04-03",
+    "size": "medium"
+  },
+  "subtasks": [
+    {
+      "id": "SUB-001",
+      "title": "Bootstrap .NET solution structure and CI pipeline",
+      "description": "Create the initial .NET solution with project layout mirroring the TypeScript source structure. Set up the solution file, core project references, NuGet package manifest, and a GitHub Actions CI workflow that builds and runs unit tests. Establish coding conventions (EditorConfig, .gitignore additions, nullable reference types enabled).",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [],
+      "files": {
+        "create": [
+          "dotnet/OpenClaude.sln",
+          "dotnet/src/OpenClaude.Cli/OpenClaude.Cli.csproj",
+          "dotnet/src/OpenClaude.Core/OpenClaude.Core.csproj",
+          "dotnet/src/OpenClaude.Providers/OpenClaude.Providers.csproj",
+          "dotnet/src/OpenClaude.Tools/OpenClaude.Tools.csproj",
+          "dotnet/src/OpenClaude.Mcp/OpenClaude.Mcp.csproj",
+          "dotnet/tests/OpenClaude.Core.Tests/OpenClaude.Core.Tests.csproj",
+          "dotnet/Directory.Build.props",
+          "dotnet/.editorconfig",
+          ".github/workflows/dotnet-ci.yml"
+        ],
+        "modify": [
+          ".gitignore"
+        ]
+      },
+      "acceptanceCriteria": [
+        "`dotnet build dotnet/OpenClaude.sln` succeeds with zero errors and zero warnings on macOS and Windows (verified via CI matrix run).",
+        "`dotnet test` runs and passes the placeholder unit test in OpenClaude.Core.Tests (unit test — xUnit).",
+        "Nullable reference types (`<Nullable>enable</Nullable>`) and implicit usings are enabled globally via Directory.Build.props.",
+        "CI workflow triggers on push to `main` and on all PRs; both build and test steps are present."
+      ],
+      "testIntent": "unit-first — TDD the project structure validator (ensure projects reference each other correctly) before wiring up real code.",
+      "done": true,
+      "completedAt": "2026-04-03T13:53:05.262Z",
+      "commitHash": "6bd082b78d1272f383cee92fba8312d5ed4a6a5b",
+      "sessionId": "0e5fc350-99f6-4a74-a7a3-cd0dfa12bdd1",
+      "provider": "claude",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude",
+      "sessionLogPath": "/Users/nicholasclyde-smith/.claude/projects/-Users-nicholasclyde-smith-Repos-openclaude/0e5fc350-99f6-4a74-a7a3-cd0dfa12bdd1.jsonl"
+    },
+    {
+      "id": "SUB-002",
+      "title": "Implement provider abstraction layer with Anthropic and OpenAI-compatible clients",
+      "description": "Port `src/services/api/providerConfig.ts` and surrounding provider logic to C#. Define `ILlmProvider` and `ILlmStreamingClient` interfaces. Implement `AnthropicProvider` using the Anthropic .NET SDK and `OpenAiCompatibleProvider` covering OpenAI, DeepSeek, Groq, Mistral, Ollama, and any other OpenAI-endpoint providers. Resolve provider type, base URL, model name, and API key from environment variables and profile JSON, matching the TypeScript provider detection logic.",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [
+        "SUB-001"
+      ],
+      "files": {
+        "create": [
+          "dotnet/src/OpenClaude.Providers/ILlmProvider.cs",
+          "dotnet/src/OpenClaude.Providers/ILlmStreamingClient.cs",
+          "dotnet/src/OpenClaude.Providers/AnthropicProvider.cs",
+          "dotnet/src/OpenClaude.Providers/OpenAiCompatibleProvider.cs",
+          "dotnet/src/OpenClaude.Providers/ProviderConfig.cs",
+          "dotnet/src/OpenClaude.Providers/ProviderResolver.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Providers/ProviderResolverTests.cs"
+        ],
+        "modify": []
+      },
+      "acceptanceCriteria": [
+        "`ProviderResolver.Resolve()` returns the correct provider type for each of: `CLAUDE_CODE_USE_OPENAI`, `GEMINI_API_KEY`, `OLLAMA_BASE_URL`, and default Anthropic — verified by unit tests (xUnit, no live API calls).",
+        "`AnthropicProvider` and `OpenAiCompatibleProvider` both implement `ILlmProvider`; `dotnet build` succeeds with no warnings.",
+        "Provider config reads `OPENAI_BASE_URL`, `OPENAI_MODEL`, and `OPENAI_API_KEY` env vars, mirroring TypeScript `providerConfig.ts` logic — verified by unit tests with environment stubs.",
+        "Unsupported or missing provider config throws a typed `ProviderConfigException` with a descriptive message."
+      ],
+      "testIntent": "unit-first — mock HTTP responses; no live API calls in unit tests.",
+      "done": true,
+      "commitHash": "ab85afa",
+      "completedAt": "2026-04-03T14:02:24.358Z",
+      "sessionId": "unknown",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude"
+    },
+    {
+      "id": "SUB-003",
+      "title": "Port core query engine with streaming tool loop and retry logic",
+      "description": "Port `src/query.ts` and `src/QueryEngine.ts` to C#. Implement the main query/response loop: send messages to the provider, process streamed tokens, detect and dispatch tool-use blocks, collect tool results, and feed them back. Implement exponential-backoff retry for transient errors. Map the TypeScript `QueryEngine` state machine to a C# async state machine using `IAsyncEnumerable<T>` for streaming.",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [
+        "SUB-002"
+      ],
+      "files": {
+        "create": [
+          "dotnet/src/OpenClaude.Core/Query/QueryEngine.cs",
+          "dotnet/src/OpenClaude.Core/Query/QueryOptions.cs",
+          "dotnet/src/OpenClaude.Core/Query/QueryResult.cs",
+          "dotnet/src/OpenClaude.Core/Query/RetryPolicy.cs",
+          "dotnet/src/OpenClaude.Core/Query/MessageHistory.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Query/QueryEngineTests.cs"
+        ],
+        "modify": []
+      },
+      "acceptanceCriteria": [
+        "`QueryEngine.RunAsync()` returns streamed text tokens via `IAsyncEnumerable<QueryChunk>` — verified by unit test with a stubbed provider returning a fixed multi-chunk response.",
+        "When the provider returns a tool-use block, `QueryEngine` calls `IToolExecutor.ExecuteAsync()`, appends the result to message history, and sends a follow-up request — verified by unit test with mock tool executor.",
+        "Transient HTTP errors (429, 503) trigger exponential-backoff retry up to the configured max attempts; quota-exhausted 429s are NOT retried — verified by unit tests (mirrors `fix(retry)` commit logic).",
+        "Message history is correctly trimmed when token count exceeds the configured context window limit."
+      ],
+      "testIntent": "unit-first for retry/state machine logic; outside-in integration test for full tool loop with stub provider."
+    },
+    {
+      "id": "SUB-004",
+      "title": "Define tool system foundation: ITool interface, registry, and permission pipeline",
+      "description": "Port `src/Tool.ts` and the tool execution service to C#. Define `ITool`, `IToolExecutor`, and `ToolPermissionPolicy` interfaces. Implement `ToolRegistry` for tool discovery and lookup by name. Implement the permission pipeline: `ICanUseTool` callback, policy limits (rate limiting, quota), and streaming output via `IToolProgressSink`. This is the scaffold all built-in tools plug into.",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [
+        "SUB-003"
+      ],
+      "files": {
+        "create": [
+          "dotnet/src/OpenClaude.Tools/ITool.cs",
+          "dotnet/src/OpenClaude.Tools/IToolExecutor.cs",
+          "dotnet/src/OpenClaude.Tools/ToolRegistry.cs",
+          "dotnet/src/OpenClaude.Tools/ToolPermissionPolicy.cs",
+          "dotnet/src/OpenClaude.Tools/ICanUseTool.cs",
+          "dotnet/src/OpenClaude.Tools/IToolProgressSink.cs",
+          "dotnet/src/OpenClaude.Tools/ToolExecutionContext.cs",
+          "dotnet/src/OpenClaude.Tools/ToolResult.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Tools/ToolRegistryTests.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Tools/ToolExecutorTests.cs"
+        ],
+        "modify": []
+      },
+      "acceptanceCriteria": [
+        "`ToolRegistry.Register()` and `ToolRegistry.Resolve(name)` work correctly; duplicate registration throws `DuplicateToolException` — verified by unit tests.",
+        "When `ICanUseTool.IsAllowedAsync()` returns `false`, `IToolExecutor` does not call the tool and returns a `ToolResult` with `Denied` status — verified by unit test.",
+        "Streaming progress events are emitted to `IToolProgressSink` during execution — verified by unit test with a fake sink capturing events.",
+        "All interfaces are XML-documented with summary tags; `dotnet build` produces zero analyzer warnings."
+      ],
+      "testIntent": "unit-first — pure logic with no I/O; test registry, permission, and progress contracts in isolation."
+    },
+    {
+      "id": "SUB-005",
+      "title": "Implement built-in file and search tools (Read, Write, Edit, Glob, Grep)",
+      "description": "Implement the five core file-system tools as `ITool` implementations: `FileReadTool`, `FileWriteTool`, `FileEditTool` (exact-string replacement), `GlobTool` (pattern matching via `Directory.GetFiles` and `Microsoft.Extensions.FileSystemGlobbing`), and `GrepTool` (content search, invoking system ripgrep or falling back to a managed implementation). Each tool validates inputs with Zod-equivalent schema (use `System.ComponentModel.DataAnnotations` or FluentValidation).",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [
+        "SUB-004"
+      ],
+      "files": {
+        "create": [
+          "dotnet/src/OpenClaude.Tools/BuiltIn/FileReadTool.cs",
+          "dotnet/src/OpenClaude.Tools/BuiltIn/FileWriteTool.cs",
+          "dotnet/src/OpenClaude.Tools/BuiltIn/FileEditTool.cs",
+          "dotnet/src/OpenClaude.Tools/BuiltIn/GlobTool.cs",
+          "dotnet/src/OpenClaude.Tools/BuiltIn/GrepTool.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Tools/FileReadToolTests.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Tools/FileEditToolTests.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Tools/GlobToolTests.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Tools/GrepToolTests.cs"
+        ],
+        "modify": []
+      },
+      "acceptanceCriteria": [
+        "`FileReadTool` returns correct content with line-number prefix for a fixture file — verified by unit test using a temp directory.",
+        "`FileEditTool` replaces the exact `old_string` with `new_string` and throws when `old_string` is not unique (or applies `replace_all`) — verified by unit tests.",
+        "`GlobTool` returns files matching `**/*.ts` in a fixture directory, sorted by modification time — verified by unit test.",
+        "`GrepTool` returns matching lines with file paths and line numbers for a regex pattern across a fixture directory — verified by unit test.",
+        "All tools return a structured `ToolResult` with `Content`, `IsError`, and `Metadata` fields."
+      ],
+      "testIntent": "unit-first — all tests use `Path.GetTempPath()` fixture directories; no external network calls."
+    },
+    {
+      "id": "SUB-006",
+      "title": "Implement built-in execution tools (Bash, PowerShell) with timeout and sandboxing",
+      "description": "Port `BashTool` and `PowerShellTool` from the TypeScript source. Use `System.Diagnostics.Process` to launch shell subprocesses. Implement configurable timeout, output streaming via `IToolProgressSink`, and a permission callback requiring explicit user approval before execution. On macOS/Linux use `/bin/bash`; on Windows use `powershell.exe` or `pwsh`. Capture stdout, stderr, and exit code in the `ToolResult`.",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [
+        "SUB-004"
+      ],
+      "files": {
+        "create": [
+          "dotnet/src/OpenClaude.Tools/BuiltIn/BashTool.cs",
+          "dotnet/src/OpenClaude.Tools/BuiltIn/PowerShellTool.cs",
+          "dotnet/src/OpenClaude.Tools/BuiltIn/ProcessRunner.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Tools/BashToolTests.cs"
+        ],
+        "modify": []
+      },
+      "acceptanceCriteria": [
+        "`BashTool.ExecuteAsync(\"echo hello\")` returns stdout `hello` and exit code 0 — verified by integration test (runs real subprocess).",
+        "Execution exceeding the configured timeout is cancelled and returns a `ToolResult` with `IsError = true` and a timeout message — verified by unit test with a mocked `ProcessRunner`.",
+        "`BashTool` calls `ICanUseTool.IsAllowedAsync()` before launching the process; if denied, the process is never spawned — verified by unit test.",
+        "stdout and stderr are streamed incrementally to `IToolProgressSink` during long-running commands."
+      ],
+      "testIntent": "mixed — mock ProcessRunner for permission/timeout unit tests; real subprocess for integration smoke tests (skipped in CI sandbox)."
+    },
+    {
+      "id": "SUB-007",
+      "title": "Build terminal UI foundation with Spectre.Console REPL loop",
+      "description": "Implement the interactive CLI entry point using Spectre.Console for rich terminal rendering (syntax highlighting, markdown-like formatting, progress spinners). Port the core REPL loop from `src/main.tsx`: read user input, dispatch to `QueryEngine`, stream response tokens to the terminal, and handle Ctrl+C gracefully. Implement the basic prompt, token-usage status line, and error display panels.",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [
+        "SUB-003"
+      ],
+      "files": {
+        "create": [
+          "dotnet/src/OpenClaude.Cli/Program.cs",
+          "dotnet/src/OpenClaude.Cli/Repl/ReplLoop.cs",
+          "dotnet/src/OpenClaude.Cli/Repl/TerminalRenderer.cs",
+          "dotnet/src/OpenClaude.Cli/Repl/StatusLine.cs",
+          "dotnet/src/OpenClaude.Cli/Repl/InputReader.cs"
+        ],
+        "modify": [
+          "dotnet/src/OpenClaude.Cli/OpenClaude.Cli.csproj"
+        ]
+      },
+      "acceptanceCriteria": [
+        "`dotnet run --project dotnet/src/OpenClaude.Cli -- --version` prints the version string and exits 0 (CLI E2E — manual verification).",
+        "The REPL loop starts, displays a prompt, sends a message to a stubbed `QueryEngine`, and streams the response tokens to the terminal — verified by a unit test with a captured `StringWriter` output.",
+        "Pressing Ctrl+C during streaming cancels the `CancellationToken` passed to `QueryEngine.RunAsync()` and prints a cancellation notice without throwing an unhandled exception.",
+        "Token usage (prompt tokens / completion tokens) is displayed in the status line after each response."
+      ],
+      "testIntent": "outside-in for REPL loop behaviour with stub engine; manual CLI E2E for terminal rendering correctness."
+    },
+    {
+      "id": "SUB-008",
+      "title": "Implement slash command system with core commands (/help, /config, /provider)",
+      "description": "Port the slash command registry from `src/commands.ts`. Define `ISlashCommand` with `Name`, `Description`, `ExecuteAsync`, and tab-completion metadata. Implement `CommandRouter` to parse `/command args` from REPL input and dispatch to the correct handler. Implement three foundational commands: `/help` (list commands), `/config` (show/edit settings JSON), and `/provider` (list and switch active provider profile).",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [
+        "SUB-007"
+      ],
+      "files": {
+        "create": [
+          "dotnet/src/OpenClaude.Cli/Commands/ISlashCommand.cs",
+          "dotnet/src/OpenClaude.Cli/Commands/CommandRouter.cs",
+          "dotnet/src/OpenClaude.Cli/Commands/HelpCommand.cs",
+          "dotnet/src/OpenClaude.Cli/Commands/ConfigCommand.cs",
+          "dotnet/src/OpenClaude.Cli/Commands/ProviderCommand.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Commands/CommandRouterTests.cs"
+        ],
+        "modify": []
+      },
+      "acceptanceCriteria": [
+        "`CommandRouter.ParseAndRoute(\"/help\")` dispatches to `HelpCommand` and `CommandRouter.ParseAndRoute(\"/config show\")` dispatches to `ConfigCommand` — verified by unit tests.",
+        "Unknown slash commands return a typed `CommandNotFoundResult` rather than throwing — verified by unit test.",
+        "`/help` lists all registered commands with descriptions; output is captured and verified in a unit test.",
+        "`/provider` lists available provider profiles from a fixture settings file — verified by unit test with a stub settings store."
+      ],
+      "testIntent": "unit-first — command dispatch logic is pure; use fake command stubs for routing tests."
+    },
+    {
+      "id": "SUB-009",
+      "title": "Implement configuration and settings management with profile support",
+      "description": "Port OpenClaude's profile and settings system. Implement `SettingsStore` to read/write `~/.openclaude/settings.json` and provider profiles (`.openclaude-profile.json`). Support environment-variable overrides matching the TypeScript env-var precedence order. Implement `ISecretStore` backed by the OS credential manager (macOS Keychain via `Security.framework` P/Invoke, Windows Credential Manager via `CredentialManagement` NuGet) for API key storage.",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [
+        "SUB-002"
+      ],
+      "files": {
+        "create": [
+          "dotnet/src/OpenClaude.Core/Config/SettingsStore.cs",
+          "dotnet/src/OpenClaude.Core/Config/ProfileConfig.cs",
+          "dotnet/src/OpenClaude.Core/Config/ISecretStore.cs",
+          "dotnet/src/OpenClaude.Core/Config/MacOsKeychainSecretStore.cs",
+          "dotnet/src/OpenClaude.Core/Config/WindowsCredentialSecretStore.cs",
+          "dotnet/src/OpenClaude.Core/Config/EnvironmentSecretStore.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Config/SettingsStoreTests.cs"
+        ],
+        "modify": []
+      },
+      "acceptanceCriteria": [
+        "`SettingsStore.Load()` correctly merges environment-variable overrides on top of file-based config — verified by unit tests with isolated temp config files.",
+        "`EnvironmentSecretStore.GetSecret(\"OPENAI_API_KEY\")` returns the env var value; platform-specific stores return `null` in unit tests (mocked platform check) — verified by unit tests.",
+        "Round-trip: write a profile to a temp file, reload it, and assert equality — verified by unit test.",
+        "Missing config file returns a default `ProfileConfig` with empty API key rather than throwing."
+      ],
+      "testIntent": "unit-first — all tests use `ISecretStore` fakes; no live keychain access in CI."
+    },
+    {
+      "id": "SUB-010",
+      "title": "Implement app state management with immutable store and reactive subscriptions",
+      "description": "Port `src/state/AppState.ts` and the state store to C#. Implement an immutable `AppState` record, `AppStateStore` (thread-safe, copy-on-write updates), and a reactive subscription API (`IObservable<AppState>` via `System.Reactive` or a lightweight custom implementation). Wire the store into `QueryEngine` and `ReplLoop` so state changes (e.g., active tool, token count, provider name) propagate to the status line.",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [
+        "SUB-007"
+      ],
+      "files": {
+        "create": [
+          "dotnet/src/OpenClaude.Core/State/AppState.cs",
+          "dotnet/src/OpenClaude.Core/State/AppStateStore.cs",
+          "dotnet/src/OpenClaude.Core/State/StateSubscription.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/State/AppStateStoreTests.cs"
+        ],
+        "modify": [
+          "dotnet/src/OpenClaude.Cli/Repl/StatusLine.cs"
+        ]
+      },
+      "acceptanceCriteria": [
+        "`AppStateStore.Dispatch(action)` applies the action immutably and notifies all subscribers — verified by unit test with two fake subscribers.",
+        "Concurrent dispatches from two threads do not corrupt state — verified by a stress unit test (10 threads, 1000 dispatches each, final token count matches expected).",
+        "`StatusLine` subscribes to `AppStateStore` and re-renders when `ActiveTool` or `TokenCount` changes — verified by unit test with a captured `StringWriter`.",
+        "`AppState` is a C# `record` type ensuring value-equality; equality unit test passes."
+      ],
+      "testIntent": "unit-first — pure state logic; concurrency test for thread-safety guarantee."
+    },
+    {
+      "id": "SUB-011",
+      "title": "Implement MCP (Model Context Protocol) client and tool discovery",
+      "description": "Port `src/services/mcp/` to C#. Implement `McpClient` that connects to MCP servers defined in `~/.claude/mcp-servers.json` (stdio and HTTP transports). Implement tool discovery: list tools from connected servers and register them dynamically into `ToolRegistry` as `McpProxyTool` instances. Handle server lifecycle (start, health-check, restart on crash).",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [
+        "SUB-004",
+        "SUB-009"
+      ],
+      "files": {
+        "create": [
+          "dotnet/src/OpenClaude.Mcp/McpClient.cs",
+          "dotnet/src/OpenClaude.Mcp/McpServerConfig.cs",
+          "dotnet/src/OpenClaude.Mcp/McpToolDiscovery.cs",
+          "dotnet/src/OpenClaude.Mcp/McpProxyTool.cs",
+          "dotnet/src/OpenClaude.Mcp/McpServerLifecycle.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Mcp/McpToolDiscoveryTests.cs"
+        ],
+        "modify": []
+      },
+      "acceptanceCriteria": [
+        "`McpToolDiscovery.DiscoverAsync()` reads a fixture `mcp-servers.json` with two server entries and registers the correct number of `McpProxyTool` instances in `ToolRegistry` — verified by integration test with a fake MCP server process.",
+        "`McpProxyTool.ExecuteAsync()` forwards the call to the MCP server and returns the result — verified by unit test with a stubbed `McpClient`.",
+        "When an MCP server process exits unexpectedly, `McpServerLifecycle` attempts a restart up to the configured retry limit — verified by unit test with a mock process factory.",
+        "Servers not listed in `mcp-servers.json` are ignored; no exception is thrown."
+      ],
+      "testIntent": "mixed — unit tests for proxy/lifecycle logic; integration test with a real stdio echo server for discovery."
+    },
+    {
+      "id": "SUB-012",
+      "title": "Implement AgentTool, WebFetchTool, and WebSearchTool",
+      "description": "Port the three remaining high-value tools. `AgentTool` spawns a sub-`QueryEngine` with its own tool set and message history, returning the final response as a `ToolResult`. `WebFetchTool` fetches a URL via `HttpClient` and converts HTML to Markdown (use `HtmlAgilityPack` + `ReverseMarkdown`). `WebSearchTool` integrates with a configurable search provider (Brave Search API or SerpAPI) to return structured results.",
+      "taskRef": "001-dotnet-port",
+      "size": "medium",
+      "dependencies": [
+        "SUB-003",
+        "SUB-005"
+      ],
+      "files": {
+        "create": [
+          "dotnet/src/OpenClaude.Tools/BuiltIn/AgentTool.cs",
+          "dotnet/src/OpenClaude.Tools/BuiltIn/WebFetchTool.cs",
+          "dotnet/src/OpenClaude.Tools/BuiltIn/WebSearchTool.cs",
+          "dotnet/src/OpenClaude.Tools/BuiltIn/IWebSearchProvider.cs",
+          "dotnet/src/OpenClaude.Tools/BuiltIn/BraveSearchProvider.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Tools/AgentToolTests.cs",
+          "dotnet/tests/OpenClaude.Core.Tests/Tools/WebFetchToolTests.cs"
+        ],
+        "modify": []
+      },
+      "acceptanceCriteria": [
+        "`AgentTool.ExecuteAsync()` creates a child `QueryEngine`, runs it with the provided prompt, and returns the final text as `ToolResult.Content` — verified by unit test with a stubbed child engine returning a fixed response.",
+        "`WebFetchTool.ExecuteAsync(url)` returns Markdown-converted HTML content from a fixture HTML string — verified by unit test with a fake `HttpMessageHandler`.",
+        "`WebSearchTool.ExecuteAsync(query)` calls `IWebSearchProvider.SearchAsync()` and returns structured results with title, URL, and snippet — verified by unit test with a fake provider.",
+        "All three tools are registered in `ToolRegistry` at application startup — verified by an integration test that resolves each by name."
+      ],
+      "testIntent": "unit-first with fakes for HTTP and child engine; no live network calls in CI."
+    }
+  ]
+}

@@ -2,6 +2,22 @@
 
 ## 2026-04-03
 
+### SUB-003
+- **Problem:** No query/response loop existed in the C# port; needed the core streaming engine that sends messages, processes tool-use blocks, retries on transient errors, and trims history.
+- **Changes:**
+  - Created `QueryOptions` record for per-run configuration (retry attempts, context window, base delay, system prompt).
+  - Created `QueryResult.cs` containing all discriminated-union types: `ContentBlock` hierarchy (`TextBlock`, `ToolUseBlock`, `ToolResultBlock`), `ChatMessage`, `LlmChunk` hierarchy, `QueryChunk` hierarchy, `LlmProviderException`, `ILlmChatClient`, and `IToolExecutor`.
+  - Created `RetryPolicy` static class: `IsQuotaExhausted()` (mirrors fix(retry) commit — detects "limit: 0" / "exceeded your current quota"), `IsTransient()` (429 non-quota + 503), `GetDelay()` (exponential backoff capped at 30 s).
+  - Created `MessageHistory` with `Add()`, `GetAll()` (snapshot), `EstimateTokens()` (chars/4), and `Trim()` (removes oldest until under limit, keeping at least one message).
+  - Created `QueryEngine` with `RunAsync(IReadOnlyList<ChatMessage>, CancellationToken)` → `IAsyncEnumerable<QueryChunk>`; inner `FetchWithRetryAsync` collects all LLM chunks before yielding, enabling clean retry semantics without mid-stream yield-in-catch.
+  - Added `ProjectReference` to `OpenClaude.Core` in the test project.
+  - Created 16 xUnit tests covering all four acceptance criteria.
+- **Files:**
+  - Created: `dotnet/src/OpenClaude.Core/Query/QueryOptions.cs`, `dotnet/src/OpenClaude.Core/Query/QueryResult.cs`, `dotnet/src/OpenClaude.Core/Query/RetryPolicy.cs`, `dotnet/src/OpenClaude.Core/Query/MessageHistory.cs`, `dotnet/src/OpenClaude.Core/Query/QueryEngine.cs`, `dotnet/tests/OpenClaude.Core.Tests/Query/QueryEngineTests.cs`
+  - Modified: `dotnet/tests/OpenClaude.Core.Tests/OpenClaude.Core.Tests.csproj`
+
+## 2026-04-03
+
 ### SUB-002
 - **Problem:** No provider abstraction layer existed; needed C# interfaces and implementations for Anthropic and OpenAI-compatible providers, plus a resolver mirroring TypeScript `providerConfig.ts` detection logic.
 - **Changes:**

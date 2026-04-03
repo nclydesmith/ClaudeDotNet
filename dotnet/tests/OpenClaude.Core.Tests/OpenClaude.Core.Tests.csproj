@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\OpenClaude.Core\OpenClaude.Core.csproj" />
     <ProjectReference Include="..\..\src\OpenClaude.Providers\OpenClaude.Providers.csproj" />
   </ItemGroup>
 
