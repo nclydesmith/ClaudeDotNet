@@ -2,6 +2,22 @@
 
 ## 2026-04-03
 
+### SUB-002
+- **Problem:** No provider abstraction layer existed; needed C# interfaces and implementations for Anthropic and OpenAI-compatible providers, plus a resolver mirroring TypeScript `providerConfig.ts` detection logic.
+- **Changes:**
+  - Created `ILlmProvider` and `ILlmStreamingClient` interfaces in `OpenClaude.Providers`.
+  - Created `ProviderConfig` record, `ProviderType` enum, and `ProviderConfigException` in `ProviderConfig.cs`.
+  - Implemented `ProviderResolver.Resolve()` with env-var detection order: `CLAUDE_CODE_USE_OPENAI` → `GEMINI_API_KEY` → `OLLAMA_BASE_URL` → default Anthropic.
+  - Implemented `AnthropicProvider` and `OpenAiCompatibleProvider`, both implementing `ILlmProvider` with nested `ILlmStreamingClient` stubs (SDK integration deferred to SUB-003).
+  - Added `<ProjectReference>` from `OpenClaude.Core.Tests` to `OpenClaude.Providers`.
+  - Added `<NoWarn>CA1707;CA1859</NoWarn>` to test project for xUnit naming convention compatibility.
+  - Created 22 xUnit tests covering all four provider detection scenarios, env-var reading, and `ProviderConfigException` behaviour.
+- **Files:**
+  - Created: `dotnet/src/OpenClaude.Providers/ILlmProvider.cs`, `dotnet/src/OpenClaude.Providers/ILlmStreamingClient.cs`, `dotnet/src/OpenClaude.Providers/ProviderConfig.cs`, `dotnet/src/OpenClaude.Providers/ProviderResolver.cs`, `dotnet/src/OpenClaude.Providers/AnthropicProvider.cs`, `dotnet/src/OpenClaude.Providers/OpenAiCompatibleProvider.cs`, `dotnet/tests/OpenClaude.Core.Tests/Providers/ProviderResolverTests.cs`
+  - Modified: `dotnet/tests/OpenClaude.Core.Tests/OpenClaude.Core.Tests.csproj`
+
+## 2026-04-03
+
 ### SUB-001
 - **Problem:** No .NET solution structure existed; needed to bootstrap projects, CI, and coding conventions for the dotnet port of OpenClaude.
 - **Changes:**

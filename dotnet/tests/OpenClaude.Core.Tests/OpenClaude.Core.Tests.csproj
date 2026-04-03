@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+    <!-- CA1707: underscore naming is standard xUnit convention -->
+    <!-- CA1859: interface-typed variables intentional for contract verification -->
+    <NoWarn>$(NoWarn);CA1707;CA1859</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +16,10 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\OpenClaude.Providers\OpenClaude.Providers.csproj" />
   </ItemGroup>
 
 </Project>
