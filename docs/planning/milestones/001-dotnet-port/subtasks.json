@@ -351,7 +351,13 @@
         "`StatusLine` subscribes to `AppStateStore` and re-renders when `ActiveTool` or `TokenCount` changes — verified by unit test with a captured `StringWriter`.",
         "`AppState` is a C# `record` type ensuring value-equality; equality unit test passes."
       ],
-      "testIntent": "unit-first — pure state logic; concurrency test for thread-safety guarantee."
+      "testIntent": "unit-first — pure state logic; concurrency test for thread-safety guarantee.",
+      "done": true,
+      "commitHash": "7256d6696f6379292f64c409d36f75017cfc6939",
+      "completedAt": "2026-04-03T18:31:50.758Z",
+      "sessionId": "8dd5d07b-d65c-4f6c-a75a-56d64f80a453",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude",
+      "sessionLogPath": "/Users/nicholasclyde-smith/.claude/projects/-Users-nicholasclyde-smith-Repos-Equity/8dd5d07b-d65c-4f6c-a75a-56d64f80a453.jsonl"
     },
     {
       "id": "SUB-011",
