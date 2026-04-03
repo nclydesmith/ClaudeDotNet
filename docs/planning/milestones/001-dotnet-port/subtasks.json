@@ -107,7 +107,14 @@
         "Transient HTTP errors (429, 503) trigger exponential-backoff retry up to the configured max attempts; quota-exhausted 429s are NOT retried — verified by unit tests (mirrors `fix(retry)` commit logic).",
         "Message history is correctly trimmed when token count exceeds the configured context window limit."
       ],
-      "testIntent": "unit-first for retry/state machine logic; outside-in integration test for full tool loop with stub provider."
+      "testIntent": "unit-first for retry/state machine logic; outside-in integration test for full tool loop with stub provider.",
+      "done": true,
+      "completedAt": "2026-04-03T14:11:10.602Z",
+      "commitHash": "6ac69ea56a4f348bf8c9db20deed3be1a5f523f1",
+      "sessionId": "6fbc8cc0-bb62-4a69-a8d5-d0e5f650e762",
+      "provider": "claude",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude",
+      "sessionLogPath": "/Users/nicholasclyde-smith/.claude/projects/-Users-nicholasclyde-smith-Repos-openclaude/6fbc8cc0-bb62-4a69-a8d5-d0e5f650e762.jsonl"
     },
     {
       "id": "SUB-004",
@@ -139,7 +146,12 @@
         "Streaming progress events are emitted to `IToolProgressSink` during execution — verified by unit test with a fake sink capturing events.",
         "All interfaces are XML-documented with summary tags; `dotnet build` produces zero analyzer warnings."
       ],
-      "testIntent": "unit-first — pure logic with no I/O; test registry, permission, and progress contracts in isolation."
+      "testIntent": "unit-first — pure logic with no I/O; test registry, permission, and progress contracts in isolation.",
+      "done": true,
+      "commitHash": "8bdb048",
+      "completedAt": "2026-04-03T14:15:05.622Z",
+      "sessionId": "none",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude"
     },
     {
       "id": "SUB-005",
@@ -171,7 +183,12 @@
         "`GrepTool` returns matching lines with file paths and line numbers for a regex pattern across a fixture directory — verified by unit test.",
         "All tools return a structured `ToolResult` with `Content`, `IsError`, and `Metadata` fields."
       ],
-      "testIntent": "unit-first — all tests use `Path.GetTempPath()` fixture directories; no external network calls."
+      "testIntent": "unit-first — all tests use `Path.GetTempPath()` fixture directories; no external network calls.",
+      "done": true,
+      "commitHash": "9266e6d",
+      "completedAt": "2026-04-03T14:23:10.724Z",
+      "sessionId": "unknown",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude"
     },
     {
       "id": "SUB-006",
