@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <!-- CA1707: underscore naming is standard xUnit convention -->
+    <!-- CA1859: interface-typed variables intentional for contract verification -->
+    <NoWarn>$(NoWarn);CA1707;CA1859</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DotnetClaude.Cli\DotnetClaude.Cli.csproj" />
+    <ProjectReference Include="..\..\src\DotnetClaude.Core\DotnetClaude.Core.csproj" />
+    <ProjectReference Include="..\..\src\DotnetClaude.Providers\DotnetClaude.Providers.csproj" />
+    <ProjectReference Include="..\..\src\DotnetClaude.Tools\DotnetClaude.Tools.csproj" />
+  </ItemGroup>
+
+</Project>
