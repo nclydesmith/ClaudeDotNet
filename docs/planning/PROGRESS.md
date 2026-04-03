@@ -2,6 +2,25 @@
 
 ## 2026-04-03
 
+### SUB-004
+- **Problem:** No tool system existed in the C# port; needed the scaffold (interfaces, registry, permission pipeline, progress sink) that all built-in tools plug into.
+- **Changes:**
+  - Created `ITool` interface: `Name`, `Description`, and `ExecuteAsync(ToolExecutionContext, CancellationToken)`.
+  - Created `ToolResult` record with `ToolResultStatus` enum (Success/Denied/Error) and factory helpers `Succeeded`, `Denied`, `Error`.
+  - Created `ToolExecutionContext` record carrying `ToolName`, `InputJson`, and `IToolProgressSink`.
+  - Created `IToolProgressSink` interface and discriminated-union events: `ToolStartedEvent`, `ToolCompletedEvent`, `ToolProgressMessage`.
+  - Created `ICanUseTool` interface: async `IsAllowedAsync` method called before execution.
+  - Created `ToolPermissionPolicy` (AND-composition of multiple `ICanUseTool` checks) and `RateLimitingPolicy` (sliding-window rate limiter).
+  - Created `ToolRegistry` with `Register`, `Resolve`, `GetAll`; throws `DuplicateToolException` / `ToolNotFoundException` on error.
+  - Created `IToolExecutor` interface and `ToolExecutor` implementation: checks permission → emits `ToolStartedEvent` → calls tool → emits `ToolCompletedEvent`; returns `Denied` result without calling the tool when permission is refused.
+  - Added `ProjectReference` to `OpenClaude.Tools` in the test project.
+  - Created 19 xUnit tests covering all four acceptance criteria.
+- **Files:**
+  - Created: `dotnet/src/OpenClaude.Tools/ITool.cs`, `dotnet/src/OpenClaude.Tools/IToolExecutor.cs`, `dotnet/src/OpenClaude.Tools/ToolExecutor.cs`, `dotnet/src/OpenClaude.Tools/ToolRegistry.cs`, `dotnet/src/OpenClaude.Tools/ToolPermissionPolicy.cs`, `dotnet/src/OpenClaude.Tools/ICanUseTool.cs`, `dotnet/src/OpenClaude.Tools/IToolProgressSink.cs`, `dotnet/src/OpenClaude.Tools/ToolExecutionContext.cs`, `dotnet/src/OpenClaude.Tools/ToolResult.cs`, `dotnet/tests/OpenClaude.Core.Tests/Tools/ToolRegistryTests.cs`, `dotnet/tests/OpenClaude.Core.Tests/Tools/ToolExecutorTests.cs`
+  - Modified: `dotnet/tests/OpenClaude.Core.Tests/OpenClaude.Core.Tests.csproj`
+
+## 2026-04-03
+
 ### SUB-003
 - **Problem:** No query/response loop existed in the C# port; needed the core streaming engine that sends messages, processes tool-use blocks, retries on transient errors, and trims history.
 - **Changes:**
