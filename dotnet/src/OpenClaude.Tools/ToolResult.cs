@@ -18,9 +18,23 @@ public enum ToolResultStatus
 /// </summary>
 public sealed record ToolResult(ToolResultStatus Status, string? Output, string? ErrorMessage = null)
 {
+    /// <summary>Structured content returned by the tool (alias for <see cref="Output"/>).</summary>
+    public string? Content => Output;
+
+    /// <summary>Whether the tool execution resulted in an error.</summary>
+    public bool IsError => Status == ToolResultStatus.Error;
+
+    /// <summary>Optional key-value metadata attached by the tool.</summary>
+    public IReadOnlyDictionary<string, string> Metadata { get; init; } =
+        new Dictionary<string, string>();
+
     /// <summary>Creates a successful result with the given output string.</summary>
     public static ToolResult Succeeded(string output) =>
         new(ToolResultStatus.Success, output);
+
+    /// <summary>Creates a successful result with output and metadata.</summary>
+    public static ToolResult Succeeded(string output, IReadOnlyDictionary<string, string> metadata) =>
+        new(ToolResultStatus.Success, output) { Metadata = metadata };
 
     /// <summary>Creates a denied result with a human-readable reason.</summary>
     public static ToolResult Denied(string reason) =>

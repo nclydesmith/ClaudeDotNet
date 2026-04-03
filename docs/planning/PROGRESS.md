@@ -2,6 +2,22 @@
 
 ## 2026-04-03
 
+### SUB-005
+- **Problem:** No built-in file-system tools existed; needed `FileReadTool`, `FileWriteTool`, `FileEditTool`, `GlobTool`, and `GrepTool` as concrete `ITool` implementations so agents can read, write, edit, and search the local filesystem.
+- **Changes:**
+  - Updated `ToolResult` with computed `Content` (alias for `Output`), `IsError` bool, and init-only `Metadata` dictionary — backward-compatible with existing SUB-004 tests.
+  - Added `Microsoft.Extensions.FileSystemGlobbing` NuGet reference to `OpenClaude.Tools.csproj`.
+  - Created `FileReadTool`: reads file lines, returns content prefixed with 6-digit right-aligned line numbers (`{n,6}\t{line}`); supports `offset`/`limit` windowing.
+  - Created `FileWriteTool`: writes content to disk, creating parent directories as needed; reports bytes written in metadata.
+  - Created `FileEditTool`: exact-string replacement with uniqueness guard — errors when `old_string` appears more than once unless `replace_all: true`; returns replacement count in metadata.
+  - Created `GlobTool`: wraps `Microsoft.Extensions.FileSystemGlobbing.Matcher` for `**`-style patterns; results sorted by last-write time (most-recently-modified first); returns match count in metadata.
+  - Created `GrepTool`: regex search across files in a directory (filtered by optional `glob`); returns `filepath:linenum:content` lines; skips known binary extensions; returns file/match counts in metadata.
+  - All five tools parse snake_case JSON inputs via `[JsonPropertyName]` attributes and return structured `ToolResult`.
+  - Created 34 xUnit tests (temp-directory fixtures, no network) covering all acceptance criteria: line-number prefix, offset/limit windowing, edit uniqueness guard, replace_all, glob pattern matching, modification-time sort, regex matching, multi-file grep, glob filter, metadata fields, and error paths.
+- **Files:**
+  - Modified: `dotnet/src/OpenClaude.Tools/ToolResult.cs`, `dotnet/src/OpenClaude.Tools/OpenClaude.Tools.csproj`
+  - Created: `dotnet/src/OpenClaude.Tools/BuiltIn/FileReadTool.cs`, `dotnet/src/OpenClaude.Tools/BuiltIn/FileWriteTool.cs`, `dotnet/src/OpenClaude.Tools/BuiltIn/FileEditTool.cs`, `dotnet/src/OpenClaude.Tools/BuiltIn/GlobTool.cs`, `dotnet/src/OpenClaude.Tools/BuiltIn/GrepTool.cs`, `dotnet/tests/OpenClaude.Core.Tests/Tools/FileReadToolTests.cs`, `dotnet/tests/OpenClaude.Core.Tests/Tools/FileEditToolTests.cs`, `dotnet/tests/OpenClaude.Core.Tests/Tools/GlobToolTests.cs`, `dotnet/tests/OpenClaude.Core.Tests/Tools/GrepToolTests.cs`
+
 ### SUB-004
 - **Problem:** No tool system existed in the C# port; needed the scaffold (interfaces, registry, permission pipeline, progress sink) that all built-in tools plug into.
 - **Changes:**
