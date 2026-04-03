@@ -2,6 +2,24 @@
 
 ## 2026-04-03
 
+### SUB-012
+- **Problem:** No web-capable or agent-spawning tools existed; needed `AgentTool`, `WebFetchTool`, and `WebSearchTool` as concrete `ITool` implementations.
+- **Changes:**
+  - Added `HtmlAgilityPack 1.11.72` and `ReverseMarkdown 4.4.0` NuGet references to `OpenClaude.Tools.csproj`.
+  - Created `IWebSearchProvider` interface and `WebSearchResult` record (title, URL, snippet).
+  - Created `BraveSearchProvider`: calls Brave Search API, parses JSON response, returns structured results.
+  - Created `IChildAgentRunner` interface (co-located in `AgentTool.cs`) for testable child-engine abstraction.
+  - Created `AgentTool`: parses `{ "prompt": "..." }`, delegates to `IChildAgentRunner.RunAsync()`, returns final text as `ToolResult`.
+  - Created `WebFetchTool`: fetches a URL via `HttpClient`, strips `<script>`/`<style>` nodes with HtmlAgilityPack, converts to Markdown via ReverseMarkdown; `ConvertHtmlToMarkdown` is `public static` for direct unit-test access.
+  - Created `WebSearchTool`: calls `IWebSearchProvider.SearchAsync()`, formats results as numbered Markdown list with title/URL/snippet.
+  - Created 16 unit tests across `AgentToolTests` and `WebFetchToolTests` covering all four acceptance criteria; integration test verifies all three tools resolve by name from `ToolRegistry`.
+  - Fixed pre-existing CA1822 build error in `McpClient.cs` (SUB-011 placeholder) that was blocking solution-wide builds.
+- **Files:**
+  - Created: `dotnet/src/OpenClaude.Tools/BuiltIn/IWebSearchProvider.cs`, `dotnet/src/OpenClaude.Tools/BuiltIn/BraveSearchProvider.cs`, `dotnet/src/OpenClaude.Tools/BuiltIn/AgentTool.cs`, `dotnet/src/OpenClaude.Tools/BuiltIn/WebFetchTool.cs`, `dotnet/src/OpenClaude.Tools/BuiltIn/WebSearchTool.cs`, `dotnet/tests/OpenClaude.Core.Tests/Tools/AgentToolTests.cs`, `dotnet/tests/OpenClaude.Core.Tests/Tools/WebFetchToolTests.cs`
+  - Modified: `dotnet/src/OpenClaude.Tools/OpenClaude.Tools.csproj`, `dotnet/src/OpenClaude.Mcp/McpClient.cs`
+
+## 2026-04-03
+
 ### SUB-007
 - **Problem:** No interactive CLI entry point existed; needed a Spectre.Console-backed REPL loop that reads user input, dispatches to `QueryEngine`, streams response tokens to the terminal, handles Ctrl+C gracefully, and displays token usage after each turn.
 - **Changes:**

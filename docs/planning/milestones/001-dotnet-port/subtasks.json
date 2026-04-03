@@ -386,7 +386,13 @@
         "When an MCP server process exits unexpectedly, `McpServerLifecycle` attempts a restart up to the configured retry limit — verified by unit test with a mock process factory.",
         "Servers not listed in `mcp-servers.json` are ignored; no exception is thrown."
       ],
-      "testIntent": "mixed — unit tests for proxy/lifecycle logic; integration test with a real stdio echo server for discovery."
+      "testIntent": "mixed — unit tests for proxy/lifecycle logic; integration test with a real stdio echo server for discovery.",
+      "done": true,
+      "commitHash": "7d43e8b87f1c13b4d29cdc0b26fb149f901c251c",
+      "completedAt": "2026-04-03T20:48:59.580Z",
+      "sessionId": "8dd5d07b-d65c-4f6c-a75a-56d64f80a453",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude",
+      "sessionLogPath": "/Users/nicholasclyde-smith/.claude/projects/-Users-nicholasclyde-smith-Repos-Equity/8dd5d07b-d65c-4f6c-a75a-56d64f80a453.jsonl"
     },
     {
       "id": "SUB-012",
