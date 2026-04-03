@@ -57,6 +57,9 @@ public sealed record ToolUseQueryChunk(string Id, string Name, string InputJson)
 /// <summary>The result returned from a tool execution.</summary>
 public sealed record ToolResultQueryChunk(string ToolUseId, string Result, bool IsError) : QueryChunk;
 
+/// <summary>Token usage reported by the provider at the end of a response turn.</summary>
+public sealed record UsageQueryChunk(int PromptTokens, int CompletionTokens) : QueryChunk;
+
 // ── Provider exception ───────────────────────────────────────────────────────
 
 /// <summary>

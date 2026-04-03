@@ -2,6 +2,24 @@
 
 ## 2026-04-03
 
+### SUB-007
+- **Problem:** No interactive CLI entry point existed; needed a Spectre.Console-backed REPL loop that reads user input, dispatches to `QueryEngine`, streams response tokens to the terminal, handles Ctrl+C gracefully, and displays token usage after each turn.
+- **Changes:**
+  - Added `UsageQueryChunk(int PromptTokens, int CompletionTokens)` to `QueryResult.cs` so providers can surface token counts through the `QueryEngine` stream.
+  - Updated `OpenClaude.Cli.csproj`: added `Spectre.Console 0.49.1` package reference and `ProjectReference` to `OpenClaude.Core`; set `AssemblyVersion`/`InformationalVersion` to `0.1.0`.
+  - Created `Repl/InputReader.cs`: reads a line from a `TextReader` respecting a `CancellationToken`; injectable for tests.
+  - Created `Repl/StatusLine.cs`: accumulates `PromptTokens`/`CompletionTokens` and formats the status string.
+  - Created `Repl/TerminalRenderer.cs`: wraps `IAnsiConsole` (Spectre.Console) with `WritePrompt`, `WriteToken`, `EndResponse`, `WriteStatusLine`, `WriteError`, `WriteCancellationNotice`; `CreateForWriter(TextWriter)` factory supports test capture.
+  - Created `Repl/ReplLoop.cs`: core REPL loop over `IQueryAdapter`; dispatches user input, streams `TextQueryChunk`/`UsageQueryChunk`, handles `OperationCanceledException` from Ctrl+C by printing a notice without rethrowing.
+  - Created `Program.cs`: handles `--version` flag (reads `AssemblyInformationalVersionAttribute`), wires `Console.CancelKeyPress` → `CancellationTokenSource`, and starts `ReplLoop` with a `StubQueryAdapter` placeholder.
+  - Created `Repl/ReplLoopTests.cs` with 5 xUnit tests covering: token streaming + status line, message forwarding to engine, cancellation notice, blank-line skipping, and `UsageQueryChunk`-driven status display.
+  - Updated `OpenClaude.Core.Tests.csproj` to add `ProjectReference` to `OpenClaude.Cli`.
+- **Files:**
+  - Modified: `dotnet/src/OpenClaude.Core/Query/QueryResult.cs`, `dotnet/src/OpenClaude.Cli/OpenClaude.Cli.csproj`, `dotnet/tests/OpenClaude.Core.Tests/OpenClaude.Core.Tests.csproj`
+  - Created: `dotnet/src/OpenClaude.Cli/Program.cs`, `dotnet/src/OpenClaude.Cli/Repl/ReplLoop.cs`, `dotnet/src/OpenClaude.Cli/Repl/TerminalRenderer.cs`, `dotnet/src/OpenClaude.Cli/Repl/StatusLine.cs`, `dotnet/src/OpenClaude.Cli/Repl/InputReader.cs`, `dotnet/tests/OpenClaude.Core.Tests/Repl/ReplLoopTests.cs`
+
+## 2026-04-03
+
 ### SUB-005
 - **Problem:** No built-in file-system tools existed; needed `FileReadTool`, `FileWriteTool`, `FileEditTool`, `GlobTool`, and `GrepTool` as concrete `ITool` implementations so agents can read, write, edit, and search the local filesystem.
 - **Changes:**
