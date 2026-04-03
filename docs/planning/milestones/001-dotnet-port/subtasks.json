@@ -282,7 +282,13 @@
         "`/help` lists all registered commands with descriptions; output is captured and verified in a unit test.",
         "`/provider` lists available provider profiles from a fixture settings file — verified by unit test with a stub settings store."
       ],
-      "testIntent": "unit-first — command dispatch logic is pure; use fake command stubs for routing tests."
+      "testIntent": "unit-first — command dispatch logic is pure; use fake command stubs for routing tests.",
+      "done": true,
+      "commitHash": "4f4ccb7",
+      "completedAt": "2026-04-03T17:24:16.710Z",
+      "sessionId": "8dd5d07b-d65c-4f6c-a75a-56d64f80a453",
+      "sessionRepoRoot": "/Users/nicholasclyde-smith/Repos/openclaude",
+      "sessionLogPath": "/Users/nicholasclyde-smith/.claude/projects/-Users-nicholasclyde-smith-Repos-Equity/8dd5d07b-d65c-4f6c-a75a-56d64f80a453.jsonl"
     },
     {
       "id": "SUB-009",
